@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# vscode-workspace settings
+.vscode/
+
+# JSON files generated during the script execution
+*.json
