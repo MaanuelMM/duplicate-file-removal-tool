@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Authors:      MaanuelMM
 # Created:      2019/11/19
-# Last update:  2019/11/19
+# Last update:  2019/11/23
 
 import os
 import sys
@@ -10,8 +10,6 @@ import glob
 import filecmp
 import hashlib
 import argparse
-
-from pathlib import Path
 
 
 def dir_path(path):
@@ -31,10 +29,15 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def main():
-    parsed_args = parse_arguments()
-    print(parsed_args)
+def recursive_path_read(path):
+    for filename in glob.iglob(path + '**/**', recursive=True):
+        if os.path.isfile(filename):
+            print(filename)
 
+
+def main():
+    recursive_path_read(parse_arguments().path)
+    
 
 if __name__ == "__main__":
     main()
