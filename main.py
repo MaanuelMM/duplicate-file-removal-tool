@@ -5,6 +5,7 @@
 # Last update:  2019/11/24
 
 import os
+import re
 import sys
 import glob
 import json
@@ -83,7 +84,8 @@ def dump_file_list():
 def main():
     recursive_path_read(parse_arguments().path)
     dump_file_list()
-    print('Estimated free space: ' + str(estimated_free_space) + ' bytes')
+    print('Estimated free space: ' +
+          re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', str(estimated_free_space)) + ' bytes')
 
 
 if __name__ == "__main__":
