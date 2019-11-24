@@ -83,7 +83,7 @@ def dump_file_list():
 def main():
     recursive_path_read(parse_arguments().path)
     dump_file_list()
-    print('Espacio estimado a liberar: ' + str(estimated_free_space) + ' bytes')
+    print('Estimated free space: ' + str(estimated_free_space) + ' bytes')
 
 
 if __name__ == "__main__":
