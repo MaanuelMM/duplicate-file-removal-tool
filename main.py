@@ -57,10 +57,9 @@ def insert_dict(filename):
         hash_file_dict[hash_file] = [[filename]]
     else:
         for file in hash_file_dict[hash_file]:
-            if os.path.getsize(file[0]) == os.path.getsize(filename):
-                if filecmp.cmp(file[0], filename, shallow=False):
-                    file.append(filename)
-                    break
+            if filecmp.cmp(file[0], filename, shallow=False):
+                file.append(filename)
+                break
         else:
             hash_file_dict[hash_file].append([filename])
 
