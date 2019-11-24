@@ -19,6 +19,8 @@ BLOCKSIZE = 65536
 
 hash_file_dict = dict()
 
+estimated_free_space = 0
+
 
 def dir_path(path):
     if os.path.isdir(path):
@@ -39,7 +41,7 @@ def parse_arguments():
 
 def hash_calc(filename):
     sha1_hasher = hashlib.sha1()    # enough for file comparison and then filecmp if it is needed
-    
+
     with open(filename, 'rb') as file:
         while True:
             chunk = file.read(BLOCKSIZE)
@@ -51,6 +53,8 @@ def hash_calc(filename):
 
 
 def insert_dict(filename):
+    global estimated_free_space     # must be specified as global because Python behavior 
+
     hash_file = hash_calc(filename)
 
     if hash_file not in hash_file_dict:
@@ -59,6 +63,7 @@ def insert_dict(filename):
         for file in hash_file_dict[hash_file]:
             if filecmp.cmp(file[0], filename, shallow=False):
                 file.append(filename)
+                estimated_free_space += os.path.getsize(filename)
                 break
         else:
             hash_file_dict[hash_file].append([filename])
@@ -78,6 +83,8 @@ def dump_file_list():
 def main():
     recursive_path_read(parse_arguments().path)
     dump_file_list()
+    print('Espacio estimado a liberar: ' + str(estimated_free_space) + ' bytes')
+
 
 if __name__ == "__main__":
     main()
