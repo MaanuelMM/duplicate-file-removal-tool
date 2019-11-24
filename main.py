@@ -16,7 +16,6 @@ import argparse
 from datetime import datetime
 from tqdm import tqdm
 
-BLOCKSIZE = 65536
 
 hash_file_dict = dict()
 
@@ -45,7 +44,7 @@ def hash_calc(filename):
 
     with open(filename, 'rb') as file:
         while True:
-            chunk = file.read(BLOCKSIZE)
+            chunk = file.read(sha1_hasher.block_size)
             if not chunk:
                 break
             sha1_hasher.update(chunk)
