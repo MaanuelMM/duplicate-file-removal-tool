@@ -71,7 +71,7 @@ def recursive_path_read(path):
 
 
 def dump_file_list():
-    with open('files-' + str(datetime.now()).replace(':', '-') + '.json', 'w', encoding='utf-8') as dump_file:
+    with open('files-' + str(datetime.now()).replace(':', '.') + '.json', 'w', encoding='utf-8') as dump_file:
         json.dump(hash_file_dict, dump_file, indent=4)
 
 
