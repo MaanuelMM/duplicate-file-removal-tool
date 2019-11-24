@@ -80,12 +80,15 @@ def dump_file_list():
         json.dump(hash_file_dict, dump_file, indent=4)
 
 
-def main():
-    recursive_path_read(parse_arguments().path)
-    dump_file_list()
+def print_estimated_free_space():
     print('Estimated free space: ' +
           re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', str(estimated_free_space)) + ' bytes')
 
+
+def main():
+    recursive_path_read(parse_arguments().path)
+    dump_file_list()
+    print_estimated_free_space()
 
 if __name__ == "__main__":
     main()
