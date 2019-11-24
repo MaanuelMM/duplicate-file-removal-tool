@@ -9,6 +9,7 @@ import re
 import sys
 import glob
 import json
+import shutil
 import filecmp
 import hashlib
 import argparse
@@ -39,8 +40,17 @@ def parse_arguments():
     return parser.parse_args()
 
 
+def is_same_node(file_1, file_2):
+    return os.stat(file_1).st_ino == os.stat(file_2).st_ino
+
+
+def is_same_file(file_1, file_2):
+    return filecmp.cmp(file_1, file_2, shallow=False)
+
+
 def hash_calc(filename):
-    sha1_hasher = hashlib.sha1()    # enough for file comparison and then filecmp if it is needed
+    # enough for file comparison and then filecmp if it is needed
+    sha1_hasher = hashlib.sha1()
 
     with open(filename, 'rb') as file:
         while True:
@@ -53,7 +63,7 @@ def hash_calc(filename):
 
 
 def insert_dict(filename):
-    global estimated_free_space     # must be specified as global because Python behavior 
+    global estimated_free_space     # must be specified as global due to Python behavior
 
     hash_file = hash_calc(filename)
 
@@ -61,15 +71,16 @@ def insert_dict(filename):
         hash_file_dict[hash_file] = [[filename]]
     else:
         for file in hash_file_dict[hash_file]:
-            if filecmp.cmp(file[0], filename, shallow=False):
+            if is_same_file(file[0], filename):
                 file.append(filename)
-                estimated_free_space += os.path.getsize(filename)
+                if not is_same_node(file[0], filename):
+                    estimated_free_space += os.path.getsize(filename)
                 break
         else:
             hash_file_dict[hash_file].append([filename])
 
 
-def recursive_path_read(path):
+def recursive_hash_calc(path):
     for filename in tqdm(glob.glob(path + '**/**', recursive=True), desc='Hash computation'):
         if os.path.isfile(filename):
             insert_dict(filename)
@@ -80,15 +91,37 @@ def dump_file_list():
         json.dump(hash_file_dict, dump_file, indent=4)
 
 
+def link_replacer(original_file, duplicated_file):
+    os.link(original_file, duplicated_file)
+
+
+def duplicate_file_removal():
+    for file_list_list in hash_file_dict.values():
+        for file_list in file_list_list:
+            first_file = ""
+            for file in file_list:
+                if not first_file:      # if is empty ("")
+                    first_file = file
+                elif not is_same_node(first_file, file):
+                    os.remove(file)
+                    link_replacer(first_file, file)
+
+
+def formatted_data_str(value):
+    return (re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', str(value)) + ' bytes')
+
+
 def print_estimated_free_space():
-    print('Estimated free space: ' +
-          re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', str(estimated_free_space)) + ' bytes')
+    print('Estimated free space after executing the script: ' +
+          formatted_data_str(estimated_free_space) + '.')
 
 
 def main():
-    recursive_path_read(parse_arguments().path)
+    recursive_hash_calc(parse_arguments().path)
     dump_file_list()
     print_estimated_free_space()
+    duplicate_file_removal()
+
 
 if __name__ == "__main__":
     main()
