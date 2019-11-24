@@ -14,7 +14,7 @@ import hashlib
 import argparse
 
 from datetime import datetime
-
+from tqdm import tqdm
 
 BLOCKSIZE = 65536
 
@@ -71,7 +71,7 @@ def insert_dict(filename):
 
 
 def recursive_path_read(path):
-    for filename in glob.iglob(path + '**/**', recursive=True):
+    for filename in tqdm(glob.glob(path + '**/**', recursive=True), desc='Hash computation'):
         if os.path.isfile(filename):
             insert_dict(filename)
 
