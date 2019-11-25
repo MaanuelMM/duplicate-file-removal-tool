@@ -48,6 +48,10 @@ def is_same_file(file_1, file_2):
     return filecmp.cmp(file_1, file_2, shallow=False)
 
 
+def get_size(file):
+    return os.path.getsize(file)
+
+
 def hash_calc(filename):
     # enough for file comparison and then filecmp if it is needed
     sha1_hasher = hashlib.sha1()
@@ -74,7 +78,7 @@ def insert_dict(filename):
             if is_same_file(file[0], filename):
                 file.append(filename)
                 if not is_same_node(file[0], filename):
-                    estimated_free_space += os.path.getsize(filename)
+                    estimated_free_space += get_size(filename)
                 break
         else:
             hash_file_dict[hash_file].append([filename])
