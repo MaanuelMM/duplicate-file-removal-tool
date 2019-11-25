@@ -77,7 +77,7 @@ def insert_dict(filename):
         for file in hash_file_dict[hash_file]:
             if is_same_file(file[0], filename):
                 file.append(filename)
-                if not is_same_node(file[0], filename):
+                if not is_same_node(file[0], filename) and get_size(filename) != 0:
                     estimated_free_space += get_size(filename)
                 break
         else:
@@ -106,7 +106,7 @@ def duplicate_file_removal():
             for file in file_list:
                 if not first_file:      # if is empty ("")
                     first_file = file
-                elif not is_same_node(first_file, file):
+                elif not is_same_node(first_file, file) and get_size(file) != 0:
                     os.remove(file)
                     link_replacer(first_file, file)
 
