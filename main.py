@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Authors:      MaanuelMM
 # Created:      2019/11/19
-# Last update:  2019/11/24
+# Last update:  2019/11/25
 
 import os
 import re
@@ -81,7 +81,7 @@ def insert_dict(filename):
 
 
 def recursive_hash_calc(path):
-    for filename in tqdm(glob.glob(path + '**/**', recursive=True), desc='Hash computation'):
+    for filename in tqdm(glob.glob(path + '[!System Volume Information]**/**', recursive=True), desc='Hash computation'):
         if os.path.isfile(filename):
             insert_dict(filename)
 
