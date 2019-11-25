@@ -105,8 +105,11 @@ def duplicate_file_removal():
             first_file = ""
             for file in file_list:
                 if not first_file:      # if is empty ("")
-                    first_file = file
-                elif not is_same_node(first_file, file) and get_size(file) != 0:
+                    if get_size(file) != 0:
+                        first_file = file
+                    else:
+                        break
+                elif not is_same_node(first_file, file):
                     os.remove(file)
                     link_replacer(first_file, file)
 
