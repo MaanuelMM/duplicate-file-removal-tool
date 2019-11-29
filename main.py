@@ -84,12 +84,19 @@ def insert_dict(filename):
             hash_file_dict[hash_file].append([filename])
 
 
-def recursive_hash_calc(path):
-    print('Getting the list of files from the path given. Please wait...')
+def get_files(path):
+    files_list = list()
 
-    for filename in tqdm(glob.glob(path + '[!System Volume Information]**/**', recursive=True), desc='Hash computation'):
-        if os.path.isfile(filename):
-            insert_dict(filename)
+    for element in tqdm(glob.glob(path + '[!System Volume Information]**/**', recursive=True), desc='Files retrieval'):
+        if os.path.isfile(element):
+            files_list.append(element)
+
+    return files_list
+
+
+def recursive_hash_calc(path):
+    for filename in tqdm(get_files(path), desc='Files comparison'):
+        insert_dict(filename)
 
 
 def dump_file_list():
