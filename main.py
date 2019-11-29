@@ -87,7 +87,7 @@ def insert_dict(filename):
 def get_files(path):
     files_list = list()
 
-    for element in tqdm(glob.glob(path + '[!System Volume Information]**/**', recursive=True), desc='Files retrieval'):
+    for element in tqdm(glob.glob(path + '**/*', recursive=True), desc='Files retrieval'):
         if os.path.isfile(element):
             files_list.append(element)
 
