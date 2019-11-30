@@ -119,6 +119,7 @@ def dump_file_list():
 
 
 def link_replacer(original_file, duplicated_file):
+    os.remove(duplicated_file)
     os.link(original_file, duplicated_file)
 
 
@@ -133,7 +134,6 @@ def duplicate_file_removal():
                     else:
                         break
                 elif not is_same_node(first_file, file):
-                    os.remove(file)
                     link_replacer(first_file, file)
 
 
