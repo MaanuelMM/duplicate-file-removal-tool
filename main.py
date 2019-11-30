@@ -6,10 +6,8 @@
 
 import os
 import re
-import sys
 import glob
 import json
-import shutil
 import filecmp
 import hashlib
 import argparse
