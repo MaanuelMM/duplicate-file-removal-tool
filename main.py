@@ -127,7 +127,7 @@ def link_replacer(original_file, duplicated_file):
 
 
 def duplicate_file_removal():
-    for file_list_list in hash_file_dict.values():
+    for file_list_list in tqdm(hash_file_dict.values(), desc='Files removal'):
         for file_list in file_list_list:
             first_file = ""
             for file in file_list:
