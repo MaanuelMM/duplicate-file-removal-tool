@@ -30,12 +30,17 @@ def dir_path(path):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(prog='Duplicate File Removal Tool by Manuel M. M.', usage='Execute with [-p PATH] or [--path PATH] to delete all duplicated files inside a path.',
+    parser = argparse.ArgumentParser(prog='Duplicate File Removal Tool by Manuel M. M.',
+                                     usage='\nExecute with [-p PATH] or [--path PATH] to delete all duplicated files inside a path.' +
+                                     '\nExecute with [-r] or [--root] if the given path is the root of a drive.' +
+                                     '\nExecute with [-v] or [--view] if you only need to know how much space you could save.',
                                      description='A Python made script to delete duplicated files from a specified path. Built by own necessity.')
     parser.add_argument('-p', '--path', type=dir_path,
                         required=True, help='path name needed to execute the tool')
     parser.add_argument('-r', '--root', action='store_true',
                         help='needed if the given path is the root of a drive')
+    parser.add_argument('-v', '--view', action='store_true',
+                        help='if you only want to know how much space you could save')
 
     return parser.parse_args()
 
@@ -149,7 +154,8 @@ def main():
         parse_arguments().path)), parse_arguments().root)
     dump_file_list()
     print_estimated_free_space()
-    duplicate_file_removal()
+    if not parse_arguments().view:
+        duplicate_file_removal()
 
 
 if __name__ == "__main__":
