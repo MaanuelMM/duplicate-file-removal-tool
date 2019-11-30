@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Authors:      MaanuelMM
 # Created:      2019/11/19
-# Last update:  2019/11/29
+# Last update:  2019/11/30
 
 import os
 import re
@@ -36,8 +36,21 @@ def parse_arguments():
                                      description='A Python made script to delete duplicated files from a specified path. Built by own necessity.')
     parser.add_argument('-p', '--path', type=dir_path,
                         required=True, help='path name needed to execute the tool')
+    parser.add_argument('-r', '--root', action='store_true',
+                        help='needed if the given path is the root of a drive')
 
     return parser.parse_args()
+
+
+def backslash_replacer(path):
+    return path.replace('\\', '/')
+
+
+def path_sanitizer(path):
+    if re.search('/$', path):
+        return path
+    else:
+        return path + '/'
 
 
 def is_same_node(file_1, file_2):
@@ -85,11 +98,18 @@ def insert_dict(filename):
 
 
 def get_files(path):
-    return [element for element in tqdm(glob.glob(path + '**/*', recursive=True), desc='Files retrieval') if os.path.isfile(element)]
+    return [backslash_replacer(element) for element in tqdm(glob.glob(path + '**/*', recursive=True), desc='Files retrieval') if os.path.isfile(element)]
 
 
-def recursive_hash_calc(path):
-    for filename in tqdm(get_files(path), desc='Files comparison'):
+def get_filtered_files(path, is_root):
+    if is_root:
+        return list(filter(lambda x: not re.search(f'{path}System Volume Information/*', x, re.IGNORECASE), get_files(path)))
+    else:
+        return get_files(path)
+
+
+def recursive_hash_calc(path, is_root):
+    for filename in tqdm(get_filtered_files(path, is_root), desc='Files comparison'):
         insert_dict(filename)
 
 
@@ -127,7 +147,8 @@ def print_estimated_free_space():
 
 
 def main():
-    recursive_hash_calc(parse_arguments().path)
+    recursive_hash_calc(path_sanitizer(backslash_replacer(
+        parse_arguments().path)), parse_arguments().root)
     dump_file_list()
     print_estimated_free_space()
     duplicate_file_removal()
