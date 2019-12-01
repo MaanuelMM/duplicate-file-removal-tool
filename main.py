@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Authors:      MaanuelMM
 # Created:      2019/11/19
-# Last update:  2019/11/30
+# Last update:  2019/12/01
 
 import os
 import re
@@ -70,16 +70,16 @@ def get_size(file):
 
 def hash_calc(filename):
     # enough for file comparison and then filecmp if it is needed
-    sha1_hasher = hashlib.sha1()
+    hasher = hashlib.sha1()
 
     with open(filename, 'rb') as file:
         while True:
-            chunk = file.read(sha1_hasher.block_size)
+            chunk = file.read(hasher.block_size)
             if not chunk:
                 break
-            sha1_hasher.update(chunk)
+            hasher.update(chunk)
 
-    return sha1_hasher.hexdigest()
+    return hasher.hexdigest()
 
 
 def insert_dict(filename):
@@ -90,10 +90,10 @@ def insert_dict(filename):
     if hash_file not in hash_file_dict:
         hash_file_dict[hash_file] = [[filename]]
     else:
-        for file in hash_file_dict[hash_file]:
-            if is_same_file(file[0], filename):
-                file.append(filename)
-                if not is_same_node(file[0], filename) and get_size(filename) != 0:
+        for file_list in hash_file_dict[hash_file]:
+            if is_same_file(file_list[0], filename):
+                file_list.append(filename)
+                if not is_same_node(file_list[0], filename) and get_size(filename) != 0:
                     estimated_free_space += get_size(filename)
                 break
         else:
@@ -121,9 +121,9 @@ def dump_file_list():
         json.dump(hash_file_dict, dump_file, indent=4)
 
 
-def link_replacer(original_file, duplicated_file):
-    os.remove(duplicated_file)
-    os.link(original_file, duplicated_file)
+def link_replacer(original_file, duplicate_file):
+    os.remove(duplicate_file)
+    os.link(original_file, duplicate_file)
 
 
 def duplicate_file_removal():
@@ -131,7 +131,7 @@ def duplicate_file_removal():
         for file_list in file_list_list:
             first_file = ""
             for file in file_list:
-                if not first_file:      # if is empty ("")
+                if not first_file:      # if it's empty ("")
                     if get_size(file) != 0:
                         first_file = file
                     else:
