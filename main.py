@@ -6,13 +6,13 @@
 
 import os
 import re
-import glob
 import json
 import filecmp
 import hashlib
 import argparse
 
 from datetime import datetime
+from glob import glob
 from tqdm import tqdm
 
 
@@ -101,7 +101,7 @@ def insert_dict(filename):
 
 
 def get_files(path):
-    return [backslash_replacer(element) for element in tqdm(glob.glob(path + '**/*', recursive=True), desc='Files retrieval') if os.path.isfile(element)]
+    return [backslash_replacer(element) for element in tqdm(glob(path + '**/*', recursive=True), desc='Files retrieval') if os.path.isfile(element)]
 
 
 def get_filtered_files(path, is_root):
