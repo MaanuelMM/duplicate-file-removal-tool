@@ -106,5 +106,5 @@ venv.bak/
 # vscode-workspace settings
 .vscode/
 
-# JSON files generated during the script execution
-*.json
+# log files generated during the script execution
+logs/

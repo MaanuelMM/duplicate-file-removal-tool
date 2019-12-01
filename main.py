@@ -116,8 +116,9 @@ def recursive_hash_calc(path, is_root):
         insert_dict(filename)
 
 
-def dump_file_list():
-    with open('files-' + str(datetime.now()).replace(':', '.') + '.json', 'w', encoding='utf-8') as dump_file:
+def dump_file_list(filename):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, 'w', encoding='utf-8') as dump_file:
         json.dump(hash_file_dict, dump_file, indent=4)
 
 
@@ -152,7 +153,7 @@ def print_estimated_free_space():
 def main():
     recursive_hash_calc(path_sanitizer(backslash_replacer(
         parse_arguments().path)), parse_arguments().root)
-    dump_file_list()
+    dump_file_list('logs/files-' + str(datetime.now()).replace(':', '-') + '.json')
     print_estimated_free_space()
     if not parse_arguments().view:
         duplicate_file_removal()
