@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Authors:      MaanuelMM
 # Created:      2019/11/19
-# Last update:  2019/12/01
+# Last update:  2019/12/02
 
 import os
 import re
@@ -73,10 +73,7 @@ def hash_calc(filename):
     hasher = hashlib.sha1()
 
     with open(filename, 'rb') as file:
-        while True:
-            chunk = file.read(hasher.block_size)
-            if not chunk:
-                break
+        for chunk in file:
             hasher.update(chunk)
 
     return hasher.hexdigest()
