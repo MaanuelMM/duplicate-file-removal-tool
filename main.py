@@ -101,11 +101,15 @@ def insert_dict(filename):
             hash_file_dict[hash_file].append([filename])
 
 
-def get_files(path, hidden_files):
+def get_glob(path, hidden_files):
     if hidden_files:
-        return [backslash_replacer(str(element)) for element in tqdm(list(Path(path).glob('**/*')), desc='Files retrieval') if os.path.isfile(element)]
+        return list(Path(path).glob('**/*'))
     else:
-        return [backslash_replacer(str(element)) for element in tqdm(glob(path + '**/*', recursive=True), desc='Files retrieval') if os.path.isfile(element)]
+        return glob(path + '**/*', recursive=True)
+
+
+def get_files(path, hidden_files):
+    return [backslash_replacer(str(element)) for element in tqdm(get_glob(path, hidden_files), desc='Files retrieval') if os.path.isfile(element)]
 
 
 def get_filtered_files(path, hidden_files, is_root):
