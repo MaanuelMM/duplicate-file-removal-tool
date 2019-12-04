@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Authors:      MaanuelMM
 # Created:      2019/11/19
-# Last update:  2019/12/03
+# Last update:  2019/12/04
 
 import os
 import re
@@ -103,7 +103,7 @@ def get_files(path):
 
 def get_filtered_files(path, is_root):
     if is_root:
-        return list(filter(lambda x: not re.search(f'{path}(System Volume Information/*|\$)', x, re.IGNORECASE), get_files(path)))
+        return list(filter(lambda x: not re.search(f'^{path}(System Volume Information|\$RECYCLE.BIN)/*', x, re.IGNORECASE), get_files(path)))
     else:
         return get_files(path)
 
