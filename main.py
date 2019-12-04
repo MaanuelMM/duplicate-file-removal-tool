@@ -12,6 +12,7 @@ import hashlib
 import argparse
 
 from datetime import datetime
+from pathlib import Path
 from glob import glob
 from tqdm import tqdm
 
@@ -32,11 +33,14 @@ def dir_path(path):
 def parse_arguments():
     parser = argparse.ArgumentParser(prog='Duplicate File Removal Tool by Manuel M. M.',
                                      usage='\nExecute with [-p PATH] or [--path PATH] to delete all duplicated files inside a path.' +
+                                     '\nExecute with [-a] or [--all] if you want to execute the program including hidden files (NOT RECOMMENDED!!).' +
                                      '\nExecute with [-r] or [--root] if the given path is the root of a drive.' +
                                      '\nExecute with [-v] or [--view] if you only need to know how much space you could save.',
                                      description='A Python made script to delete duplicated files from a specified path. Built by own necessity.')
     parser.add_argument('-p', '--path', type=dir_path,
                         required=True, help='path name needed to execute the tool')
+    parser.add_argument('-a', '--all', action='store_true',
+                        help='if you want to include hidden files (NOT RECOMMENDED!!)')
     parser.add_argument('-r', '--root', action='store_true',
                         help='needed if the given path is the root of a drive')
     parser.add_argument('-v', '--view', action='store_true',
@@ -97,19 +101,22 @@ def insert_dict(filename):
             hash_file_dict[hash_file].append([filename])
 
 
-def get_files(path):
-    return [backslash_replacer(element) for element in tqdm(glob(path + '**/*', recursive=True), desc='Files retrieval') if os.path.isfile(element)]
-
-
-def get_filtered_files(path, is_root):
-    if is_root:
-        return list(filter(lambda x: not re.search(f'^{path}(System Volume Information|\$RECYCLE.BIN)/*', x, re.IGNORECASE), get_files(path)))
+def get_files(path, hidden_files):
+    if hidden_files:
+        return [backslash_replacer(str(element)) for element in tqdm(list(Path(path).glob('**/*')), desc='Files retrieval') if os.path.isfile(element)]
     else:
-        return get_files(path)
+        return [backslash_replacer(str(element)) for element in tqdm(glob(path + '**/*', recursive=True), desc='Files retrieval') if os.path.isfile(element)]
 
 
-def recursive_hash_calc(path, is_root):
-    for filename in tqdm(get_filtered_files(path, is_root), desc='Files comparison'):
+def get_filtered_files(path, hidden_files, is_root):
+    if is_root:
+        return list(filter(lambda x: not re.search(f'^{path}(System Volume Information|\$RECYCLE.BIN)/*', x, re.IGNORECASE), get_files(path, hidden_files)))
+    else:
+        return get_files(path, hidden_files)
+
+
+def recursive_hash_calc(path, hidden_files, is_root):
+    for filename in tqdm(get_filtered_files(path, hidden_files, is_root), desc='Files comparison'):
         insert_dict(filename)
 
 
@@ -149,7 +156,7 @@ def print_estimated_free_space():
 
 def main():
     recursive_hash_calc(path_sanitizer(backslash_replacer(
-        parse_arguments().path)), parse_arguments().root)
+        parse_arguments().path)), parse_arguments().all, parse_arguments().root)
     dump_file_list('logs/files-' + str(datetime.now()).replace(':', '-') + '.json')
     print_estimated_free_space()
     if not parse_arguments().view:
