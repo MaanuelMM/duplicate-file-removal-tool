@@ -109,7 +109,7 @@ def get_glob(path, hidden_files):
 
 
 def get_files(path, hidden_files):
-    return [backslash_replacer(str(element)) for element in tqdm(get_glob(path, hidden_files), desc='Files retrieval') if os.path.isfile(element)]
+    return sorted([backslash_replacer(str(element)) for element in tqdm(get_glob(path, hidden_files), desc='Files retrieval') if os.path.isfile(element)])
 
 
 def get_filtered_files(path, hidden_files, is_root):
@@ -127,7 +127,7 @@ def recursive_hash_calc(path, hidden_files, is_root):
 def dump_file_list(filename):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w', encoding='utf-8') as dump_file:
-        json.dump(hash_file_dict, dump_file, indent=4)
+        json.dump(hash_file_dict, dump_file, indent=4, sort_keys=True)
 
 
 def link_replacer(original_file, duplicate_file):
