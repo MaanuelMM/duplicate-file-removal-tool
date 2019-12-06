@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Authors:      MaanuelMM
 # Created:      2019/11/19
-# Last update:  2019/12/04
+# Last update:  2019/12/06
 
 import os
 import re
@@ -94,7 +94,7 @@ def insert_dict(filename):
         for file_list in hash_file_dict[hash_file]:
             if is_same_file(file_list[0], filename):
                 file_list.append(filename)
-                if not is_same_node(file_list[0], filename) and get_size(filename) != 0:
+                if not is_same_node(file_list[0], filename) and get_size(filename):
                     estimated_free_space += get_size(filename)
                 break
         else:
@@ -141,7 +141,7 @@ def duplicate_file_removal():
             first_file = ""
             for file in file_list:
                 if not first_file:      # if it's empty ("")
-                    if get_size(file) != 0:
+                    if get_size(file):
                         first_file = file
                     else:
                         break
